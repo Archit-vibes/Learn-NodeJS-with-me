@@ -12,7 +12,8 @@ const server = http.createServer((req , res) => {
             break;
 
             case "/about":
-                res.end("Welcome to the about page")
+                const username = myurl.query.username
+                res.end(`Welcome to about page , ${username}`)
                 break;
             default:
                 res.end("404 Not Found")
