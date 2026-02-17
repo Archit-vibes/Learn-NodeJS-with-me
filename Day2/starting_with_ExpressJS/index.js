@@ -1,7 +1,10 @@
 const express = require('express')
 const users = require('./MOCK_DATA.json')
+const fs = require('fs')
 
 const app = express()
+
+app.use(express.urlencoded({extended : false}))
 
 //Rest API routes
 
@@ -25,16 +28,23 @@ app.get("/api/users/:id" , (req , res) => {
     return res.json(user)
 })
 
-app.post("/api/users" , (req , res) => {
-    res.json({message : "User created successfully"})
+app.post("/api/newuser" , (req , res) => {
+    const body = req.body
+    fs.writeFile("MOCK_DATA.json" , JSON.stringify([...users , {id: users.length + 1 , ...body}]) , (err) => {
+        if(err) {
+            res.status(500).json({message : "Error creating user"})
+        } else {
+            res.status(201).json({message : "User created successfully" , id: users.length + 1})
+        }
+    })
 })
 
-app.patch("/api/users/:id" , (req , res) => {
+app.patch("/api/updateuser/:id" , (req , res) => {
     const {id} = req.params
     res.json({message : `User with id ${id} updated successfully`})
 })
 
-app.delete("/api/users/:id" , (req , res) => {
+app.delete("/api/deluser/:id" , (req , res) => {
     const {id} = req.params
     res.json({message : `User with id ${id} deleted successfully`})
 })
